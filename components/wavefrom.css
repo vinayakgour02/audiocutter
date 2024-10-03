@@ -1,0 +1,48 @@
+::part(active-region) {
+    /* background-color: rgba(255, 0, 0, 0.2) !important; */
+    border-left: 10px solid #6BE0C5 !important;
+    border-right: 10px solid #6BE0C5 !important;
+    /* position: relative !important; */
+  }
+  
+  ::part(active-region)::before,
+  ::part(active-region)::after {
+    content: "⋮" !important;
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: black !important;
+    font-size: 30px !important;
+    line-height: 1 !important;
+  }
+  
+  ::part(active-region)::before {
+    left: -10px !important;
+  }
+  
+  ::part(active-region)::after {
+    right: -10px !important;
+  }
+
+
+  input[type="number"] {
+    appearance: textfield; /* Remove default spinner */
+    -moz-appearance: textfield; /* Remove spinner for Firefox */
+    position: relative;
+    width: 60px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 5px;
+    text-align: center;
+  }
+  
+  /* Style for Webkit browsers (Chrome, Safari, Edge) */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    appearance: initial; /* Ensure arrows are visible */
+    opacity: 1; /* Set opacity to 1 to make them always visible */
+    width: 20px; /* Adjust the width of the arrows */
+    height: 100%;
+  }
+  

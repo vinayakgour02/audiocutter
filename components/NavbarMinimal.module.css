@@ -1,0 +1,74 @@
+.navbar{
+    box-sizing: unset;
+}
+
+.navbar {
+  background-color: #17171E;
+  color: white;
+
+}
+
+.navbarMain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: rem(10);
+  padding-bottom: 30px;
+  padding: 10px;
+
+}
+
+.navbarMain::-webkit-scrollbar {
+  width: 10px;
+}
+
+.navbarMain::-webkit-scrollbar-thumb {
+  background-color: #665DC3;
+  /* border-radius: 10px; */
+}
+
+.navbarMain::-webkit-scrollbar-track {
+  background: #665DC3;
+}
+.linkWrapper {
+    position: relative;
+    width: 100%;
+  }
+
+.link {
+  width: rem(50);
+  height: rem(60);
+  display: flex;
+  /* padding-right: rem(10); */
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0.85;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+
+
+
+.activeLink::after {
+content: '';
+position: absolute;
+top: 0;
+right: 0;
+bottom: 0;
+width: 4px;
+background-color: purple;
+}
+
+.link[data-active] {
+  opacity: 1;
+  /* border-right: 3px solid #665DC3; */
+  /* padding-right: 10px; */
+}

@@ -9,16 +9,34 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/carousel": "^7.13.1",
+    "@mantine/core": "^7.13.1",
+    "@mantine/hooks": "^7.13.1",
+    "@mantine/modals": "^7.13.1",
+    "@mantine/notifications": "^7.13.1",
+    "@mantine/nprogress": "^7.13.1",
+    "@mantine/spotlight": "^7.13.1",
+    "@tabler/icons-react": "^3.19.0",
+    "audiobuffer-to-wav": "^1.0.0",
+    "embla-carousel-react": "^7.1.0",
+    "next": "14.2.14",
+    "peaks.js": "^3.4.2",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.14"
+    "standardized-audio-context": "^25.3.77",
+    "wavesurfer.js": "^7.8.6"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@types/audiobuffer-to-wav": "^1.0.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/wavesurfer.js": "^6.0.12",
     "eslint": "^8",
-    "eslint-config-next": "14.2.14"
+    "eslint-config-next": "14.2.14",
+    "postcss": "^8.4.47",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
+    "typescript": "^5"
   }
 }
