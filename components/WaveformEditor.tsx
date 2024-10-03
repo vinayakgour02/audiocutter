@@ -169,7 +169,7 @@ export default function WaveformEditor({ audioFile }: WaveformEditorProps) {
             drag: false,
             resize: false,
           });
-        //   @ts-ignore
+          //  @ts-expect-error
           setRegions([initialRegion]);
 
           if (initialRegion.element) {

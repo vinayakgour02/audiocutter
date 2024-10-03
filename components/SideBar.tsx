@@ -6,12 +6,11 @@ import {
   Tooltip,
   UnstyledButton,
   Stack,
-  rem,
   Text,
 } from "@mantine/core";
 import {
   IconAlignJustified,
-  IconHome2,
+  
   IconLogout,
   IconSwitchHorizontal,
 } from "@tabler/icons-react";
