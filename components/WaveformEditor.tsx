@@ -23,20 +23,24 @@ import WaveSurfer from "wavesurfer.js";
 import RegionsPlugin from "wavesurfer.js/dist/plugins/regions";
 import "./wavefrom.css";
 import { AudioContext } from "standardized-audio-context";
-import audioBufferToWav from 'audiobuffer-to-wav';
+import audioBufferToWav from "audiobuffer-to-wav";
 
-import { Buffer } from 'buffer';
+interface Region {
+  start: number;
+  end: number;
+  color: string;
+  drag: boolean;
+  resize: boolean;
+  element?: HTMLElement;
+  setOptions: (options: Partial<Region>) => void;
+}
 
 interface WaveformEditorProps {
   audioFile: File;
-  onReset: () => void;
   onSave: (blob: Blob, fileName: string) => void;
 }
 
-export default function WaveformEditor({
-  audioFile,
-  onReset,
-}: WaveformEditorProps) {
+export default function WaveformEditor({ audioFile }: WaveformEditorProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
   const [startTime, setStartTime] = useState(0);
@@ -45,11 +49,12 @@ export default function WaveformEditor({
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const regionsPluginRef = useRef<RegionsPlugin | null>(null);
-  const [regions, setRegions] = useState<any[]>([]);
-  const [history, setHistory] = useState<{ buffer: ArrayBuffer; start: number; end: number; duration: number }[]>([]);
+  const [regions, setRegions] = useState<Region[]>([]);
+  const [history, setHistory] = useState<
+    { buffer: ArrayBuffer; start: number; end: number; duration: number }[]
+  >([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
 
-  
   const addToHistory = useCallback(
     (buffer: ArrayBuffer, start: number, end: number, duration: number) => {
       setHistory((prev) => [
@@ -61,29 +66,33 @@ export default function WaveformEditor({
     [historyIndex]
   );
 
-
   const cutAudio = useCallback(() => {
     if (wavesurfer.current && regionsPluginRef.current) {
       const region = regionsPluginRef.current.getRegions()[0];
       if (region) {
         const start = region.start;
         const end = region.end;
-        
+
         // Update the region using its own methods
         region.setOptions({ start, end });
         wavesurfer.current.setTime(start);
-  
+
         // Create a new audio buffer with the selected region
         const originalBuffer = wavesurfer.current.getDecodedData();
         if (originalBuffer) {
           // Add current state to history before cutting
-          addToHistory(originalBuffer.getChannelData(0).buffer, startTime, endTime, duration);
+          addToHistory(
+            originalBuffer.getChannelData(0).buffer,
+            startTime,
+            endTime,
+            duration
+          );
 
           const newBuffer = createTrimmedBuffer(originalBuffer, start, end);
-          
+
           // Convert the new buffer to a Blob
           const wavBlob = bufferToWaveBlob(newBuffer);
-  
+
           // Load the new Blob into WaveSurfer
           wavesurfer.current.loadBlob(wavBlob);
 
@@ -96,7 +105,11 @@ export default function WaveformEditor({
     }
   }, [addToHistory, startTime, endTime, duration]);
 
-  const createTrimmedBuffer = (originalBuffer: AudioBuffer, start: number, end: number) => {
+  const createTrimmedBuffer = (
+    originalBuffer: AudioBuffer,
+    start: number,
+    end: number
+  ) => {
     const sampleRate = originalBuffer.sampleRate;
     const startSample = Math.floor(start * sampleRate);
     const endSample = Math.floor(end * sampleRate);
@@ -108,7 +121,11 @@ export default function WaveformEditor({
       sampleRate
     );
 
-    for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
+    for (
+      let channel = 0;
+      channel < originalBuffer.numberOfChannels;
+      channel++
+    ) {
       const newChannelData = newBuffer.getChannelData(channel);
       const originalChannelData = originalBuffer.getChannelData(channel);
       for (let i = 0; i < newLength; i++) {
@@ -121,7 +138,7 @@ export default function WaveformEditor({
 
   const bufferToWaveBlob = (audioBuffer: AudioBuffer): Blob => {
     const wavArrayBuffer = audioBufferToWav(audioBuffer);
-    return new Blob([wavArrayBuffer], { type: 'audio/wav' });
+    return new Blob([wavArrayBuffer], { type: "audio/wav" });
   };
 
   useEffect(() => {
@@ -153,6 +170,7 @@ export default function WaveformEditor({
             drag: false,
             resize: false,
           });
+        //   @ts-ignore
           setRegions([initialRegion]);
 
           if (initialRegion.element) {
@@ -208,10 +226,8 @@ export default function WaveformEditor({
       .padStart(2, "0")}.${tenths}`;
   };
 
-  
-
   const updateRegion = useCallback(
-    (start: number, end: number, addToHistoryFlag = true) => {
+    (start: number, end: number) => {
       if (regions.length > 0 && regionsPluginRef.current) {
         const region = regions[0];
         region.setOptions({ start, end });
@@ -221,10 +237,9 @@ export default function WaveformEditor({
         if (region.element) {
           region.element.part.add("active-region");
         }
-
       }
     },
-    [regions, addToHistory, duration]
+    [regions]
   );
 
   const undo = useCallback(() => {
@@ -234,23 +249,29 @@ export default function WaveformEditor({
 
       if (wavesurfer.current) {
         const audioContext = new AudioContext();
-        audioContext.decodeAudioData(previousState.buffer.slice(0), (audioBuffer) => {
-          const wavBlob = bufferToWaveBlob(audioBuffer);
-          wavesurfer.current?.loadBlob(wavBlob);
+        audioContext.decodeAudioData(
+          previousState.buffer.slice(0),
+          (audioBuffer) => {
+            const wavBlob = bufferToWaveBlob(audioBuffer);
+            wavesurfer.current?.loadBlob(wavBlob);
 
-          // Update state
-          setStartTime(previousState.start);
-          setEndTime(previousState.end);
-          setDuration(previousState.duration);
+            // Update state
+            setStartTime(previousState.start);
+            setEndTime(previousState.end);
+            setDuration(previousState.duration);
 
-          // Update region
-          if (regionsPluginRef.current) {
-            const region = regionsPluginRef.current.getRegions()[0];
-            if (region) {
-              region.setOptions({ start: previousState.start, end: previousState.end });
+            // Update region
+            if (regionsPluginRef.current) {
+              const region = regionsPluginRef.current.getRegions()[0];
+              if (region) {
+                region.setOptions({
+                  start: previousState.start,
+                  end: previousState.end,
+                });
+              }
             }
           }
-        });
+        );
       }
     }
   }, [history, historyIndex]);
@@ -286,25 +307,21 @@ export default function WaveformEditor({
               <IconCut size={18} />
               <Text size="sm">Cut</Text>
             </Button>
-            <Button
-              variant="subtle"
-              color="white"
-              bg="#262633"
-            >
+            <Button variant="subtle" color="white" bg="#262633">
               <IconTrash size={18} />
               <Text size="sm">Remove</Text>
             </Button>
           </Group>
           <Group>
-            <ActionIcon 
-              variant="subtle" 
-              color="gray" 
+            <ActionIcon
+              variant="subtle"
+              color="gray"
               onClick={undo}
               disabled={historyIndex <= 0}
             >
               <IconCornerUpLeft size={18} />
             </ActionIcon>
-            <ActionIcon variant="subtle" color="gray" >
+            <ActionIcon variant="subtle" color="gray">
               <IconCornerUpRight size={18} />
             </ActionIcon>
           </Group>
@@ -524,11 +541,7 @@ export default function WaveformEditor({
                 />
               </Box>
             </Group>
-            <Button
-              variant="filled"
-              color="gray"
-              radius="xl"
-            >
+            <Button variant="filled" color="gray" radius="xl">
               Save
             </Button>
           </Group>

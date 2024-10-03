@@ -17,37 +17,7 @@ import {
 } from "@tabler/icons-react";
 // import { MantineLogo } from '@mantinex/mantine-logo';
 import classes from "./NavbarMinimal.module.css";
-import { useRouter } from "next/navigation";
 
-interface NavbarLinkProps {
-  icon: typeof IconHome2;
-  label: string;
-  active?: boolean;
-  onClick?(): void;
-}
-
-function NavbarLink({ icon, label, active, onClick }: NavbarLinkProps) {
-  return (
-    <UnstyledButton
-      onClick={onClick}
-      className={classes.link}
-      display="flex"
-      color="white"
-      data-active={active || undefined}
-    >
-      <svg
-        aria-hidden="true"
-        width={rem(40)}
-        height={rem(27)}
-        fill="white"
-        stroke="white"
-      >
-        {React.createElement(icon)}
-      </svg>
-      <Text size="sm">{label}</Text>
-    </UnstyledButton>
-  );
-}
 
 const toolsData = [
   {
@@ -295,8 +265,9 @@ export function NavbarMinimal() {
           alignItems: "center",
         }}
       >
-        {bottomLinks.map((link, index) => (
+        {bottomLinks.map((link) => (
           <Tooltip
+        
             key={link.label}
             label={link.label}
             position="left"

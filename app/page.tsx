@@ -39,11 +39,7 @@ export default function Home() {
               color="white"
               size="lg"
               radius="10rem"
-              styles={(theme) => ({
-                root: {
-                  borderColor: "#665DC3",
-                },
-              })}
+             
             >
               Browse my files
               <input
@@ -57,8 +53,6 @@ export default function Home() {
         ) : (
           <WaveformEditor
             audioFile={audioFile}
-            onSave={() => setAudioFile(null)}
-            onReset={() => setAudioFile(null)}
           />
         )}
       </Stack>
