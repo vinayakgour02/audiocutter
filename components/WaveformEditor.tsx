@@ -37,7 +37,6 @@ interface Region {
 
 interface WaveformEditorProps {
   audioFile: File;
-  onSave: (blob: Blob, fileName: string) => void;
 }
 
 export default function WaveformEditor({ audioFile }: WaveformEditorProps) {
